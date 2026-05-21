@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Asli sensitive iframe code
+// Aapka asli sensitive iframe code
 const rawCode = `<div class="iframe-container" style="flex: 1; position: relative; background: white; overflow: hidden; min-height: 0; width: 100%; height: 100%;">
   <iframe
     id="preview-iframe"
@@ -24,8 +24,8 @@ try {
     if (fs.existsSync(templatePath)) {
         let templateContent = fs.readFileSync(templatePath, 'utf8');
         
-        // Repository name automatically update kar raha hai (JAVIS-AI-2)
-        templateContent = templateContent.replace('YOUR_REPO_NAME', 'JAVIS-AI-2');
+        // JAVIS.AI repository target link replacement
+        templateContent = templateContent.replace('YOUR_REPO_NAME', 'JAVIS.AI');
         
         fs.writeFileSync(path.join(__dirname, 'index.html'), templateContent);
         console.log('✅ index.html compiled successfully from template.');
