@@ -6,7 +6,7 @@ on:
       - main  # Jab bhi aap main branch par push karenge yeh chalega
 
 permissions:
-  contents: write  # GitHub ko build files save karne ki ijazat dene ke liye
+  contents: write  # GitHub ko files save aur build karne ki ijazat dene ke liye
 
 jobs:
   build-and-deploy:
@@ -27,5 +27,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .  # Saari files ko host karega
+          publish_dir: .  # Saari generated files ko publish karega
           keep_files: true
