@@ -1,0 +1,31 @@
+name: Secure Web Builder Compiler
+
+on:
+  push:
+    branches:
+      - main  # Jab bhi aap main branch par push karenge yeh chalega
+
+permissions:
+  contents: write  # GitHub ko build files save karne ki ijazat dene ke liye
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Compile Secure Files
+        run: node compile.js
+
+      - name: Deploy Secure Pages to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .  # Saari files ko host karega
+          keep_files: true
