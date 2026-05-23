@@ -1,219 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXURA Market</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; padding: 20px; }
-        
-        /* Navbar Styling */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #1e293b; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }
-        .logo { font-size: 24px; font-weight: bold; color: #38bdf8; letter-spacing: 1px; }
-        .upload-btn { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .upload-btn:hover { background: #0369a1; }
-
-        /* Market Cards Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
-        .card-title { font-size: 20px; color: #f1f5f9; margin-bottom: 10px; font-weight: 600; }
-        .card-detail { color: #94a3b8; font-size: 14px; margin-bottom: 15px; flex-grow: 1; line-height: 1.5; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #334155; }
-        .price { font-size: 18px; font-weight: bold; color: #4ade80; }
-        .visit-link { color: #38bdf8; text-decoration: none; font-weight: 500; transition: 0.2s; }
-        .visit-link:hover { color: #7dd3fc; text-decoration: underline; }
-
-        /* Modals Architecture */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
-        .modal-content { background: #1e293b; border: 1px solid #475569; padding: 30px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .modal h3 { margin-bottom: 20px; color: #f1f5f9; font-size: 22px; }
-        .modal input, .modal textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
-        .modal input:focus, .modal textarea:focus { border-color: #38bdf8; }
-        
-        /* Notice Banner */
-        .warning-text { color: #f43f5e; font-size: 13px; font-weight: 600; margin-bottom: 15px; background: rgba(244,63,94,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(244,63,94,0.2); text-align: left; line-height: 1.4; }
-        .modal-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        
-        /* Utility Classes */
-        .loading { color: #38bdf8; font-weight: 600; text-align: center; width: 100%; padding: 40px; font-size: 18px; }
-        .generated-code { background: #0f172a; padding: 12px; border-radius: 8px; color: #4ade80; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 15px; text-align: left; max-height: 120px; overflow-y: auto; border: 1px solid #1e293b; display: none; }
-    </style>
-</head>
-<body>
-
-    <!-- Top Navigation -->
-    <nav>
-        <div class="logo">NEXURA MARKET</div>
-        <button class="upload-btn" onclick="openPasswordModal()">Upload Your Website</button>
-    </nav>
-
-    <!-- Main Visual Matrix Grid -->
-    <div class="grid" id="market-grid">
-        <p class="loading">Parsing README Database Structure...</p>
-    </div>
-
-    <!-- Phase 1: Security Handshake Prompt -->
-    <div class="modal" id="passwordModal">
-        <div class="modal-content">
-            <h3>Security Verification</h3>
-            <input type="password" id="passInput" placeholder="Write Password...">
-            <div class="modal-buttons">
-                <button class="btn btn-success" onclick="verifyPassword()">Submit</button>
-                <button class="btn btn-danger" onclick="closeModal('passwordModal')">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Phase 2: Metadata Registry Controller -->
-    <div class="modal" id="formModal">
-        <div class="modal-content">
-            <h3>Upload Website Details</h3>
-            
-            <div id="formFields">
-                <input type="text" id="webTitle" placeholder="Website Title">
-                <textarea id="webDetail" placeholder="Website Details / Description" rows="3"></textarea>
-                <input type="text" id="webPrice" placeholder="Price (e.g., 50$)">
-                <input type="url" id="webUrl" placeholder="Website URL (https://...)">
-                
-                <div class="warning-text">
-                    NOTICE: 50% tumhe NEXURA COMPANY KO DEINA HO GA AFTER SELL YOUR WEBSITE.
-                </div>
-            </div>
-
-            <!-- Temporary safehouse container for generated string payload -->
+<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>NEXURA Market</title>    <style>        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }        body { background-color: #0f172a; color: #f8fafc; padding: 20px; }                /* Navbar Styling */        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #1e293b; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }        .logo { font-size: 24px; font-weight: bold; color: #38bdf8; letter-spacing: 1px; }        .upload-btn { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }        .upload-btn:hover { background: #0369a1; }
+        /* Market Cards Grid */        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }        .card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }        .card-title { font-size: 20px; color: #f1f5f9; margin-bottom: 10px; font-weight: 600; }        .card-detail { color: #94a3b8; font-size: 14px; margin-bottom: 15px; flex-grow: 1; line-height: 1.5; }        .card-footer { display: flex; flex-direction: column; gap: 12px; padding-top: 10px; border-top: 1px solid #334155; }        .footer-top { display: flex; justify-content: space-between; align-items: center; }        .price { font-size: 18px; font-weight: bold; color: #4ade80; }        .visit-link { color: #38bdf8; text-decoration: none; font-weight: 500; transition: 0.2s; }        .visit-link:hover { color: #7dd3fc; text-decoration: underline; }                /* Buy Button Styling */        .buy-btn { background: #22c55e; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; text-align: center; text-decoration: none; transition: 0.3s; display: block; width: 100%; }        .buy-btn:hover { background: #16a34a; }
+        /* Modals Architecture */        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }        .modal-content { background: #1e293b; border: 1px solid #475569; padding: 30px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }        .modal h3 { margin-bottom: 20px; color: #f1f5f9; font-size: 22px; }        .modal input, .modal textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }        .modal input:focus, .modal textarea:focus { border-color: #38bdf8; }                /* Notice Banner */        .warning-text { color: #f43f5e; font-size: 13px; font-weight: 600; margin-bottom: 15px; background: rgba(244,63,94,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(244,63,94,0.2); text-align: left; line-height: 1.4; }        .modal-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }        .btn-success { background: #22c55e; color: white; }        .btn-success:hover { background: #16a34a; }        .btn-danger { background: #ef4444; color: white; }        .btn-danger:hover { background: #dc2626; }                /* Utility Classes */        .loading { color: #38bdf8; font-weight: 600; text-align: center; width: 100%; padding: 40px; font-size: 18px; }        .generated-code { background: #0f172a; padding: 12px; border-radius: 8px; color: #4ade80; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 15px; text-align: left; max-height: 120px; overflow-y: auto; border: 1px solid #1e293b; display: none; }    </style></head><body>
+    <nav>        <div class="logo">NEXURA MARKET</div>        <button class="upload-btn" onclick="openPasswordModal()">Upload Your Website</button>    </nav>
+    <div class="grid" id="market-grid">        <p class="loading">Parsing README Database Structure...</p>    </div>
+    <div class="modal" id="passwordModal">        <div class="modal-content">            <h3>Security Verification</h3>            <input type="password" id="passInput" placeholder="Write Password...">            <div class="modal-buttons">                <button class="btn btn-success" onclick="verifyPassword()">Submit</button>                <button class="btn btn-danger" onclick="closeModal('passwordModal')">Cancel</button>            </div>        </div>    </div>
+    <div class="modal" id="formModal">        <div class="modal-content">            <h3>Upload Website Details</h3>                        <div id="formFields">                <input type="text" id="webTitle" placeholder="Website Title">                <textarea id="webDetail" placeholder="Website Details / Description" rows="3"></textarea>                <input type="text" id="webPrice" placeholder="Price (e.g., 50$)">                <input type="url" id="webUrl" placeholder="Website URL (https://...)">                                <div class="warning-text">                    NOTICE: 50% tumhe NEXURA COMPANY KO DEINA HO GA AFTER SELL YOUR WEBSITE.                </div>            </div>
             <div id="codeDisplay" class="generated-code"></div>
+            <div class="modal-buttons">                <button class="btn btn-success" id="actionBtn" onclick="generateREADMEText()">Generate Data</button>                <button class="btn btn-danger" onclick="closeModal('formModal')">Cancel</button>            </div>        </div>    </div>
+    <script>        // Aapki Public GitHub Repository ka RAW URL jahan se runtime par text processing hogi        const README_RAW_URL = "https://raw.githubusercontent.com/muhammadtaqi512q-oss/JAVIS.AI/main/README.md";                // README file se raw stream data fetch karke client-side cards render karna        async function loadMarketFromREADME() {            const grid = document.getElementById('market-grid');            try {                // Cache busting implementation taake page reload par hamesha latest saved items milen                const res = await fetch(README_RAW_URL + '?t=' + new Date().getTime());                const text = await res.text();                                grid.innerHTML = '';                const lines = text.split('\n');                let count = 0;
+                // Har line ko trace karna aur jo "DATA|" se start ho use compile karna                lines.forEach(line => {                    if (line.trim().startsWith('DATA|')) {                        count++;                        const parts = line.replace('DATA|', '').split('|');                        let title = '', detail = '', price = '', url = '';
+                        parts.forEach(part => {                            if (part.startsWith('Title:')) title = part.replace('Title:', '').trim();                            if (part.startsWith('Detail:')) detail = part.replace('Detail:', '').trim();                            if (part.startsWith('Price:')) price = part.replace('Price:', '').trim();                            if (part.startsWith('URL:')) url = part.replace('URL:', '').trim();                        });
 
-            <div class="modal-buttons">
-                <button class="btn btn-success" id="actionBtn" onclick="generateREADMEText()">Generate Data</button>
-                <button class="btn btn-danger" onclick="closeModal('formModal')">Cancel</button>
-            </div>
-        </div>
-    </div>
+                        // Email mailto link generation dynamically                        const emailSubject = encodeURIComponent(`Nexura Market Purchase: ${title}`);                        const emailBody = encodeURIComponent(`Hello,\n\nI want to buy this website from Nexura Market.\n\nProduct Details:\n- Title: ${title}\n- Price: ${price}\n- Live Demo: ${url}\n\nPlease contact me back.`);                        const mailtoUrl = `mailto:muhammadtaqi512q@gmail.com?subject=${emailSubject}&body=${emailBody}`;
 
-    <script>
-        // Aapki Public GitHub Repository ka RAW URL jahan se runtime par text processing hogi
-        const README_RAW_URL = "https://raw.githubusercontent.com/muhammadtaqi512q-oss/JAVIS.AI/main/README.md";
-        
-        // README file se raw stream data fetch karke client-side cards render karna
-        async function loadMarketFromREADME() {
-            const grid = document.getElementById('market-grid');
-            try {
-                // Cache busting implementation taake page reload par hamesha latest saved items milen
-                const res = await fetch(README_RAW_URL + '?t=' + new Date().getTime());
-                const text = await res.text();
-                
-                grid.innerHTML = '';
-                const lines = text.split('\n');
-                let count = 0;
-
-                // Har line ko trace karna aur jo "DATA|" se start ho use compile karna
-                lines.forEach(line => {
-                    if (line.trim().startsWith('DATA|')) {
-                        count++;
-                        const parts = line.replace('DATA|', '').split('|');
-                        let title = '', detail = '', price = '', url = '';
-
-                        parts.forEach(part => {
-                            if (part.startsWith('Title:')) title = part.replace('Title:', '').trim();
-                            if (part.startsWith('Detail:')) detail = part.replace('Detail:', '').trim();
-                            if (part.startsWith('Price:')) price = part.replace('Price:', '').trim();
-                            if (part.startsWith('URL:')) url = part.replace('URL:', '').trim();
-                        });
-
-                        // Dynamic operational blocks execution
-                        grid.innerHTML += `
-                            <div class="card">
-                                <h2 class="card-title">${title}</h2>
-                                <p class="card-detail">${detail}</p>
-                                <div class="card-footer">
-                                    <span class="price">${price}</span>
-                                    <a href="${url}" target="_blank" class="visit-link">Live Demo →</a>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-
-                if (count === 0) {
-                    grid.innerHTML = '<p style="color:#64748b; text-align:center; width:100%;">Market is empty. Be the first to upload!</p>';
-                }
-            } catch (err) {
-                grid.innerHTML = '<p style="color:#ef4444; text-align:center; width:100%;">Error processing matrix from README source.</p>';
-            }
-        }
-
-        // Window toggles
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-        
-        function closeModal(id) { 
-            document.getElementById(id).style.display = 'none'; 
-            // Reset fields states securely
-            document.getElementById('formFields').style.display = 'block';
-            document.getElementById('codeDisplay').style.display = 'none';
-            document.getElementById('actionBtn').setAttribute('onclick', 'generateREADMEText()');
-            document.getElementById('actionBtn').innerText = "Generate Data";
-        }
-
-        function verifyPassword() {
-            const pass = document.getElementById('passInput').value;
-            if (pass === "mt5121472786tm") {
-                closeModal('passwordModal');
-                document.getElementById('formModal').style.display = 'flex';
-                document.getElementById('passInput').value = ''; 
-            } else {
-                alert("Authentication Failed. Access Denied.");
-            }
-        }
-
-        // Data payload verification engine
-        function generateREADMEText() {
-            const title = document.getElementById('webTitle').value.trim();
-            const detail = document.getElementById('webDetail').value.trim();
-            const price = document.getElementById('webPrice').value.trim();
-            const url = document.getElementById('webUrl').value.trim();
-
-            if(!title || !detail || !price || !url) {
-                alert("All verification parameters are required!");
-                return;
-            }
-
+                        // Dynamic operational blocks execution with Buy Now Button                        grid.innerHTML += `                            <div class="card">                                <h2 class="card-title">${title}</h2>                                <p class="card-detail">${detail}</p>                                <div class="card-footer">                                    <div class="footer-top">                                        <span class="price">${price}</span>                                        <a href="${url}" target="_blank" class="visit-link">Live Demo →</a>                                    </div>                                    <a href="${mailtoUrl}" class="buy-btn">Buy Now</a>                                </div>                            </div>                        `;                    }                });
+                if (count === 0) {                    grid.innerHTML = '<p style="color:#64748b; text-align:center; width:100%;">Market is empty. Be the first to upload!</p>';                }            } catch (err) {                grid.innerHTML = '<p style="color:#ef4444; text-align:center; width:100%;">Error processing matrix from README source.</p>';            }        }
+        // Window toggles        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }                function closeModal(id) {             document.getElementById(id).style.display = 'none';             // Reset fields states securely            document.getElementById('formFields').style.display = 'block';            document.getElementById('codeDisplay').style.display = 'none';            document.getElementById('actionBtn').setAttribute('onclick', 'generateREADMEText()');            document.getElementById('actionBtn').innerText = "Generate Data";        }
+        function verifyPassword() {            const pass = document.getElementById('passInput').value;            if (pass === "mt5121472786tm") {                closeModal('passwordModal');                document.getElementById('formModal').style.display = 'flex';                document.getElementById('passInput').value = '';             } else {                alert("Authentication Failed. Access Denied.");            }        }
+        // Data payload verification engine        function generateREADMEText() {            const title = document.getElementById('webTitle').value.trim();            const detail = document.getElementById('webDetail').value.trim();            const price = document.getElementById('webPrice').value.trim();            const url = document.getElementById('webUrl').value.trim();
+            if(!title || !detail || !price || !url) {                alert("All verification parameters are required!");                return;            }
             if(!confirm("Kya aap Nexura Company ki 50% revenue terms se agree karte hain?")) return;
-
-            // Enforcing formatting structure matrix
-            const formattedLine = `DATA|Title: ${title}|Detail: ${detail}|Price: ${price}|URL: ${url}`;
-            
-            // Re-render display fields
-            document.getElementById('formFields').style.display = 'none';
-            const displayBlock = document.getElementById('codeDisplay');
-            displayBlock.innerText = formattedLine;
-            displayBlock.style.display = 'block';
-
-            // Mutate layout controller action button state
-            const actionBtn = document.getElementById('actionBtn');
-            actionBtn.innerText = "Copy Payload & Open Editor";
-            actionBtn.setAttribute('onclick', `copyAndRedirect()`);
-        }
-
-        // Final phase: execution trigger route without authentication tokens
-        function copyAndRedirect() {
-            const textToCopy = document.getElementById('codeDisplay').innerText;
-            navigator.clipboard.writeText(textToCopy);
-            
-            alert("Safar Mukammal! Aapka data secure pipeline mein copy ho gaya hai. Ab GitHub page khulega, wahan README.md ke sab se end (aakhri line) par ja kar Ctrl+V (Paste) kar dein aur commit kar dein!");
-            
-            window.open("https://github.com/muhammadtaqi512q-oss/JAVIS.AI/edit/main/README.md", "_blank");
-            closeModal('formModal');
-        }
-
-        // Engine initialize sequence
-        loadMarketFromREADME();
-    </script>
-</body>
-</html>
+            // Enforcing formatting structure matrix            const formattedLine = `DATA|Title: ${title}|Detail: ${detail}|Price: ${price}|URL: ${url}`;                        // Re-render display fields            document.getElementById('formFields').style.display = 'none';            const displayBlock = document.getElementById('codeDisplay');            displayBlock.innerText = formattedLine;            displayBlock.style.display = 'block';
+            // Mutate layout controller action button state            const actionBtn = document.getElementById('actionBtn');            actionBtn.innerText = "Copy Payload & Open Editor";            actionBtn.setAttribute('onclick', `copyAndRedirect()`);        }
+        // Final phase: execution trigger route without authentication tokens        function copyAndRedirect() {            const textToCopy = document.getElementById('codeDisplay').innerText;            navigator.clipboard.writeText(textToCopy);                        alert("Safar Mukammal! Aapka data secure pipeline mein copy ho gaya hai. Ab GitHub page khulega, wahan README.md ke sab se end (aakhri line) par ja kar Ctrl+V (Paste) kar dein aur commit kar dein!");                        window.open("https://github.com/muhammadtaqi512q-oss/JAVIS.AI/edit/main/README.md", "_blank");            closeModal('formModal');        }
+        // Engine initialize sequence        loadMarketFromREADME();    </script></body></html>
