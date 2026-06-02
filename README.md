@@ -6,3 +6,4 @@ DATA|Title: E-commerce Web Builder|Detail: AI powered website builder with expor
 DATA|Title: Portfolio Site Template|Detail: Fully responsive single page developer portfolio built with Tailwind CSS|Price: 30$|URL: https://example.com
 DATA|Title: web builder|Detail: AI powered web builder with function of download design website as html and backend zip and publish option.|Price: 500$|URL: https://muhammadtaqi512q-oss.github.io/M-BOX/AI
  
+DATA|Title: AI|Detail: WITHOUT API AI|Price: 20$|URL: https://aether-ai-mt.oneapp.dev/
