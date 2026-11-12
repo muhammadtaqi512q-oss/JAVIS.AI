@@ -1,226 +1,710 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXURA Market</title>
+    <title>VEXALIO LOTTERY | Win Full Ownership of AI or Game Engine</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        obsidian: '#060913',
+                        cardbg: '#0d1326',
+                        neonEmerald: '#10b981',
+                        neonCyan: '#06b6d4',
+                        neonAmber: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; padding: 20px; }
-        
-        /* Navbar Styling */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #1e293b; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }
-        .logo { font-size: 24px; font-weight: bold; color: #38bdf8; letter-spacing: 1px; }
-        .upload-btn { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .upload-btn:hover { background: #0369a1; }
-
-        /* Market Cards Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
-        .card-title { font-size: 20px; color: #f1f5f9; margin-bottom: 10px; font-weight: 600; }
-        .card-detail { color: #94a3b8; font-size: 14px; margin-bottom: 15px; flex-grow: 1; line-height: 1.5; }
-        
-        .card-footer { display: flex; flex-direction: column; gap: 12px; padding-top: 15px; border-top: 1px solid #334155; }
-        .footer-top { display: flex; justify-content: space-between; align-items: center; }
-        .price { font-size: 18px; font-weight: bold; color: #4ade80; }
-        .visit-link { color: #38bdf8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 14px; }
-        .visit-link:hover { color: #7dd3fc; text-decoration: underline; }
-        
-        /* Buy Button Action */
-        .buy-btn { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; text-align: center; text-decoration: none; transition: 0.2s; font-size: 14px; display: block; }
-        .buy-btn:hover { background: #16a34a; }
-
-        /* Modals Architecture */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
-        .modal-content { background: #1e293b; border: 1px solid #475569; padding: 30px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .modal h3 { margin-bottom: 20px; color: #f1f5f9; font-size: 22px; }
-        .modal input, .modal textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
-        .modal input:focus, .modal textarea:focus { border-color: #38bdf8; }
-                
-        /* Notice Banner */
-        .warning-text { color: #f43f5e; font-size: 13px; font-weight: 600; margin-bottom: 15px; background: rgba(244,63,94,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(244,63,94,0.2); text-align: left; line-height: 1.4; }
-        .modal-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-                
-        /* Utility Classes */
-        .loading { color: #38bdf8; font-weight: 600; text-align: center; width: 100%; padding: 40px; font-size: 18px; }
-        .generated-code { background: #0f172a; padding: 12px; border-radius: 8px; color: #4ade80; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 15px; text-align: left; max-height: 120px; overflow-y: auto; border: 1px solid #1e293b; display: none; }
+        body {
+            background-color: #060913;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+        }
+        .glass-card {
+            background: rgba(13, 19, 38, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+        }
+        /* Custom scrollbar for ticket grid */
+        .ticket-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .ticket-scroll::-webkit-scrollbar-track {
+            background: #060913;
+            border-radius: 8px;
+        }
+        .ticket-scroll::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 8px;
+        }
+        .ticket-scroll::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-emerald-500 selection:text-white overflow-x-hidden">
 
-    <nav>
-        <div class="logo">NEXURA MARKET</div>
-        <button class="upload-btn" onclick="openPasswordModal()">Upload Your Website</button>
-    </nav>
+    <!-- =====================================================================
+         OWNER CONFIGURATION PANEL (Yahan Se Sold Tickets Update Karein)
+         ===================================================================== -->
+    <script>
+        const LOTTERY_CONFIG = {
+            brandName: "VEXALIO LOTTERY",
+            ticketPricePKR: 500,
+            totalTickets: 500,
+            whatsappNumberDisplay: "03084996283",
+            whatsappNumberInternational: "923084996283",
+            
+            // Yahan un tickets ke numbers likhein jo bik chuki hain (e.g., [1, 2, 5, 14, 29])
+            // Jitne numbers is list mein honge, progress bar aur grid khud update ho jayega!
+            soldTicketNumbers: [
+                1, 2, 3, 7, 11, 14, 19, 21, 25, 28, 33, 42, 45, 50, 55, 64, 72, 77, 88, 99,
+                101, 105, 112, 120, 134, 150, 175, 200, 222, 250, 300, 333, 404, 450, 499, 500
+            ]
+        };
+    </script>
 
-    <div class="grid" id="market-grid">
-        <p class="loading">Parsing README Database Structure...</p>
-    </div>
-
-    <div class="modal" id="passwordModal">
-        <div class="modal-content">
-            <h3>Security Verification</h3>
-            <input type="password" id="passInput" placeholder="Write Password...">
-            <div class="modal-buttons">
-                <button class="btn btn-success" onclick="verifyPassword()">Submit</button>
-                <button class="btn btn-danger" onclick="closeModal('passwordModal')">Cancel</button>
-            </div>
+    <!-- Custom Toast Notification (No alert() used) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-emerald-400/30">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+            <span id="toast-message" class="font-medium text-sm">Copied to clipboard!</span>
         </div>
     </div>
 
-    <div class="modal" id="formModal">
-        <div class="modal-content">
-            <h3>Upload Website Details</h3>
-            <div id="formFields">
-                <input type="text" id="webTitle" placeholder="Website Title">
-                <textarea id="webDetail" placeholder="Website Details / Description" rows="3"></textarea>
-                <input type="text" id="webPrice" placeholder="Price (e.g., 50$)">
-                <input type="url" id="webUrl" placeholder="Website URL (https://...)">
-                <div class="warning-text">
-                    NOTICE: 50% tumhe NEXURA COMPANY KO DEINA HO GA AFTER SELL YOUR WEBSITE.
+    <!-- Top Live Ticker Banner -->
+    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white text-xs sm:text-sm font-semibold py-2 px-4 text-center tracking-wide">
+        <span class="inline-block animate-pulse mr-1.5">🔥</span>
+        TOTAL 53 WINNERS! 3 GRAND WINNERS + 50 LOGON KO FREE CUSTOM DOMAIN MILEGA — SIRF RS. 500 PER TICKET!
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-lg shadow-lg">
+                    V
+                </div>
+                <div>
+                    <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
+                        VEXALIO LOTTERY
+                    </span>
+                    <span class="hidden sm:inline-block ml-2 text-[10px] uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                        Official Draw
+                    </span>
                 </div>
             </div>
 
-            <div id="codeDisplay" class="generated-code"></div>
-
-            <div class="modal-buttons">
-                <button class="btn btn-success" id="actionBtn" onclick="generateREADMEText()">Generate Data</button>
-                <button class="btn btn-danger" onclick="closeModal('formModal')">Cancel</button>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="#ticket-tracker" class="hidden md:inline-flex text-xs font-semibold text-slate-300 hover:text-white px-3 py-2 rounded-lg transition">
+                    Live Tickets
+                </a>
+                <a href="#buy-section" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Buy Ticket (Rs. 500)</span>
+                </a>
             </div>
         </div>
-    </div>
+    </header>
 
-    <script>
-        // Aapki Public GitHub Repository ka RAW URL jahan se runtime par text processing hogi
-        const README_RAW_URL = "https://raw.githubusercontent.com/muhammadtaqi512q-oss/JAVIS.AI/main/README.md";
-                
-        // README file se raw stream data fetch karke client-side cards render karna
-        async function loadMarketFromREADME() {
-            const grid = document.getElementById('market-grid');
-            try {
-                // Cache busting implementation taake page reload par hamesha latest saved items milen
-                const res = await fetch(README_RAW_URL + '?t=' + new Date().getTime());
-                const text = await res.text();
-                        
-                grid.innerHTML = '';
-                const lines = text.split('\n');
-                let count = 0;
+    <!-- Hero Section -->
+    <section class="relative pt-10 pb-12 sm:pt-16 sm:pb-20 px-4 sm:px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-semibold mb-6">
+                <i class="fa-solid fa-trophy"></i>
+                <span>53 Total Winners • 3 Grand Prize Winners + 50 Free Custom Domain Winners</span>
+            </div>
 
-                // Har line ko trace karna aur jo "DATA|" se start ho use compile karna
-                lines.forEach(line => {
-                    if (line.trim().startsWith('DATA|')) {
-                        count++;
-                        const parts = line.replace('DATA|', '').split('|');
-                        let title = '', detail = '', price = '', url = '';
+            <!-- Main Headline -->
+            <h1 class="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight mb-5">
+                3 Grand Winners Ko Milega Full Engine + <br class="hidden sm:block">
+                <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent">
+                    50 Logon Ko FREE Custom Domain!
+                </span>
+            </h1>
 
-                        parts.forEach(part => {
-                            if (part.startsWith('Title:')) title = part.replace('Title:', '').trim();
-                            if (part.startsWith('Detail:')) detail = part.replace('Detail:', '').trim();
-                            if (part.startsWith('Price:')) price = part.replace('Price:', '').trim();
-                            if (part.startsWith('URL:')) url = part.replace('URL:', '').trim();
-                        });
+            <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+                Sirf <strong class="text-emerald-400 font-bold">PKR 500</strong> ki ticket khareedein! <strong class="text-white">3 Grand Winners</strong> ko milega <strong class="text-white">Lyra 9-Game Builder</strong> ya <strong class="text-white">Custom AI Builder</strong> + Free Domain, aur <strong class="text-amber-300">50 Lucky Winners</strong> ko milega apna <strong class="text-amber-300">FREE Live Domain</strong> (<code>yourname.oneapp.dev</code>)!
+            </p>
 
-                        // Email content structuring
-                        const emailSubject = encodeURIComponent(`NEXURA Market - Order Request: ${title}`);
-                        const emailBody = encodeURIComponent(`Hello,\n\nI am interested in buying this product from Nexura Market.\n\nProduct Details:\n- Title: ${title}\n- Price: ${price}\n- Live Demo: ${url}\n\nPlease guide me regarding the purchase process.\n\nRegards,`);
-                        const mailtoUrl = `mailto:muhammadtaqi512q@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+            <!-- Quick Key Stats Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto mb-10">
+                <div class="glass-card rounded-2xl p-4 border border-emerald-500/20">
+                    <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Ticket Price</div>
+                    <div class="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400">Rs. 500</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Per Ticket</div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border border-cyan-500/20">
+                    <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Total Winners</div>
+                    <div class="font-display text-2xl sm:text-3xl font-extrabold text-cyan-400">53</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">3 Grand + 50 Domains</div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border border-amber-500/20">
+                    <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Remaining</div>
+                    <div id="hero-remaining-count" class="font-display text-2xl sm:text-3xl font-extrabold text-amber-400">--</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Out of 500 Tickets</div>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border border-purple-500/20">
+                    <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Server Cost</div>
+                    <div class="font-display text-2xl sm:text-3xl font-extrabold text-purple-400">Rs. 0</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Zero Paid APIs</div>
+                </div>
+            </div>
 
-                        // Dynamic operational blocks execution
-                        grid.innerHTML += `
-                            <div class="card">
-                                <h2 class="card-title">${title}</h2>
-                                <p class="card-detail">${detail}</p>
-                                <div class="card-footer">
-                                    <div class="footer-top">
-                                        <span class="price">${price}</span>
-                                        <a href="${url}" target="_blank" class="visit-link">Live Demo →</a>
-                                    </div>
-                                    <a href="${mailtoUrl}" class="buy-btn">Buy Now</a>
-                                </div>
+            <!-- Primary CTA Buttons -->
+    <!-- Grand Prizes Showcase Section (53 Total Winners) -->
+    <section id="prizes" class="py-12 px-4 sm:px-6 border-t border-slate-800/60 bg-slate-950/40">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-10">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-bold uppercase tracking-widest text-cyan-400">
+                    53 GUARANTEED WINNERS OUT OF 500 TICKETS
+                </span>
+                <h2 class="font-display text-2xl sm:text-4xl font-extrabold mt-3">
+                    3 Grand Winners + <span class="text-amber-400">50 Free Domain Winners</span>
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl mx-auto">
+                    <strong>3 Grand Prize Winners</strong> ko Option A ya Option B + Free Domain milega, aur baqi <strong>50 Lucky Winners</strong> ko <strong>FREE Custom Domain</strong> (Option C) milega!
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 sm:gap-7">
+                <!-- Prize Option A: Lyra Game Builder -->
+                <div class="glass-card rounded-3xl p-6 sm:p-7 border border-emerald-500/30 glow-emerald flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute top-4 right-4 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-3 py-1 rounded-full">
+                        3 GRAND WINNERS • CHOICE 1
+                    </div>
+
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mb-5">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                        <h3 class="font-display text-xl sm:text-2xl font-extrabold text-white mb-2">
+                            Lyra 9-Game Builder & Publisher
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-5">
+                            3 Grand Winners mein se har winner isay choose kar sakta hai: Ek complete browser-native game engine jahan user <strong>9 playable/exportable games</strong> build kar sakta hai aur direct online <strong>publish</strong> bhi kar sakta hai + Free Domain!
+                        </p>
+
+                        <ul class="space-y-2.5 text-sm text-slate-300 mb-7">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>9 Complete Game Engines:</strong> Playable & exportable games built-in hain.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>Direct Publishing Engine:</strong> Users apni game bana kar live publish kar sakte hain.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>Full Source Code, IP Rights + Free Domain:</strong> 100% ownership + live domain setup included.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                        <a href="https://lyra-gb.oneapp.dev/" target="_blank" rel="noopener noreferrer" class="flex-1 py-3.5 px-5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border border-emerald-500/40 font-bold text-sm transition flex items-center justify-center gap-2">
+                            <span>Live Demo Kholen</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Prize Option B: Custom AI Builder -->
+                <div class="glass-card rounded-3xl p-6 sm:p-7 border border-cyan-500/30 glow-cyan flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute top-4 right-4 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold px-3 py-1 rounded-full">
+                        3 GRAND WINNERS • CHOICE 2
+                    </div>
+
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-5">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <h3 class="font-display text-xl sm:text-2xl font-extrabold text-white mb-2">
+                            Custom AI Builder & Ollama Engine
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-5">
+                            Ya 3 Grand Winners mein se har winner isay choose kar sakta hai: Ek powerful AI creation platform jahan se user apni marzi ka AI bana kar <strong>download</strong> kar sakta hai + Free Domain!
+                        </p>
+
+                        <ul class="space-y-2.5 text-sm text-slate-300 mb-7">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-cyan-400 mt-1"></i>
+                                <span><strong>Downloadable Custom AI Models:</strong> User apna AI tool bana kar export/download kar sakta hai.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-cyan-400 mt-1"></i>
+                                <span><strong>Dual AI Engine:</strong> Free <code>text.pollution.ai</code> + <strong>Local Ollama AI Backend</strong> support bhi mojood hai.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-cyan-400 mt-1"></i>
+                                <span><strong>Full Source Code, IP Rights + Free Domain:</strong> Complete frontend & backend source code winner ko milega.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                        <a href="https://avelia2.pages.dev/aibuilder" target="_blank" rel="noopener noreferrer" class="flex-1 py-3.5 px-5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 font-bold text-sm transition flex items-center justify-center gap-2">
+                            <span>Live Demo Kholen</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Prize Option C: 50 Winners Free Custom Domain -->
+                <div class="glass-card rounded-3xl p-6 sm:p-7 border border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.22)] flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute top-4 right-4 bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-1 rounded-full">
+                        50 LUCKY WINNERS • BONUS
+                    </div>
+
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl mb-5">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <h3 class="font-display text-xl sm:text-2xl font-extrabold text-white mb-2">
+                            50 Logon Ko FREE Domain!
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-5">
+                            3 Grand Winners ke ilawa, <strong class="text-amber-300">50 lucky ticket buyers</strong> ko milega apna khud ka <strong class="text-white">FREE Custom Subdomain / Domain</strong> (jaise <code>avelia.oneapp.dev</code> ya <code>yourname.oneapp.dev</code>) bilkul muft!
+                        </p>
+
+                        <ul class="space-y-2.5 text-sm text-slate-300 mb-7">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                                <span><strong>Instant Activation & Zero Renewal Cost:</strong> Koi salana renewal fee nahi, foran live hoga.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                                <span><strong>Ready for Web & Game Hosting:</strong> Apni website, game, ya portfolio ke liye live domain hasil karein.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                                <span><strong>53 Total Prizes (10.6% Win Rate):</strong> 500 tickets mein se 53 prizes nikalenge!</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                        <a href="https://avelia.oneapp.dev/" target="_blank" rel="noopener noreferrer" class="flex-1 py-3.5 px-5 rounded-xl bg-amber-500/15 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 font-bold text-sm transition flex items-center justify-center gap-2">
+                            <span>Sample: avelia.oneapp.dev</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 53 Winners Summary Box -->
+            <div class="mt-8 glass-card rounded-2xl p-5 sm:p-6 border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-amber-950/30 flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div class="text-sm text-slate-200 leading-relaxed">
+                    <strong class="text-white font-display text-base block mb-1">53 Winners Kaise Select Honge? (How It Works)</strong>
+                    Live draw mein sab se pehle <strong>3 Grand Prize Tickets</strong> nikali jayengi — har ek Grand Winner apni pasand se <strong>Lyra 9-Game Builder</strong> YA <strong>Custom AI Builder</strong> (+ Free Domain) choose karega. Iske foran baad <strong>50 mazeed tickets</strong> nikali jayengi jinhein apna <strong>FREE Custom Domain</strong> (<code>yourname.oneapp.dev</code>) milega!
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ticket Booking & WhatsApp Checkout Section -->
+    <section id="buy-section" class="py-14 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border border-emerald-500/30 shadow-2xl relative overflow-hidden">
+                <div class="text-center mb-8">
+                    <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                        Instant WhatsApp Booking
+                    </span>
+                    <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-white">
+                        Apni Lucky Ticket Book Karein
+                    </h2>
+                    <p class="text-slate-400 text-sm sm:text-base mt-2">
+                        Tickets ki tadad select karein aur direct WhatsApp par message bhej kar apna ticket number confirm karein.
+                    </p>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="max-w-xl mx-auto">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center">
+                        Kitni Tickets Buy Karni Hain? (Select Quantity)
+                    </label>
+                    <div class="grid grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+                        <button type="button" onclick="selectQuantity(1)" id="qty-btn-1" class="qty-btn py-3.5 rounded-2xl font-display font-extrabold text-lg border-2 border-emerald-500 bg-emerald-500/20 text-white transition">
+                            1 Ticket
+                            <span class="block text-[11px] font-sans font-normal text-emerald-300">Rs. 500</span>
+                        </button>
+                        <button type="button" onclick="selectQuantity(2)" id="qty-btn-2" class="qty-btn py-3.5 rounded-2xl font-display font-extrabold text-lg border border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500 transition">
+                            2 Tickets
+                            <span class="block text-[11px] font-sans font-normal text-slate-400">Rs. 1,000</span>
+                        </button>
+                        <button type="button" onclick="selectQuantity(5)" id="qty-btn-5" class="qty-btn py-3.5 rounded-2xl font-display font-extrabold text-lg border border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500 transition">
+                            5 Tickets
+                            <span class="block text-[11px] font-sans font-normal text-slate-400">Rs. 2,500</span>
+                        </button>
+                        <button type="button" onclick="selectQuantity(10)" id="qty-btn-10" class="qty-btn py-3.5 rounded-2xl font-display font-extrabold text-lg border border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500 transition">
+                            10 Tickets
+                            <span class="block text-[11px] font-sans font-normal text-slate-400">Rs. 5,000</span>
+                        </button>
+                    </div>
+
+                    <!-- Custom Quantity Input & Total Display -->
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                            <span class="text-sm text-slate-300 font-medium">Custom Tickets:</span>
+                            <div class="flex items-center bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                                <button type="button" onclick="changeCustomQty(-1)" class="px-3.5 py-2 text-slate-300 hover:bg-slate-800 font-bold">-</button>
+                                <input type="number" id="custom-qty-input" value="1" min="1" max="100" onchange="handleInputQty(this.value)" class="w-14 text-center bg-transparent text-white font-bold focus:outline-none">
+                                <button type="button" onclick="changeCustomQty(1)" class="px-3.5 py-2 text-slate-300 hover:bg-slate-800 font-bold">+</button>
                             </div>
-                        `;
-                    }
-                });
+                        </div>
 
-                if (count === 0) {
-                    grid.innerHTML = '<p style="color:#64748b; text-align:center; width:100%;">Market is empty. Be the first to upload!</p>';
-                }
+                        <div class="text-center sm:text-right w-full sm:w-auto border-t sm:border-t-0 border-slate-800 pt-3 sm:pt-0">
+                            <span class="text-xs text-slate-400 block">Total Payable Amount</span>
+                            <span id="total-price-display" class="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400">Rs. 500</span>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Direct Buy CTA -->
+                    <a id="whatsapp-buy-link" href="https://wa.me/923084996283?text=Assalam-o-Alaikum!%20Mujhe%20VEXALIO%20LOTTERY%20ki%201%20ticket(s)%20buy%20karni%20hain%20(Total:%20Rs.%20500).%20Payment%20details%20bhej%20dein." target="_blank" rel="noopener noreferrer" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-400 hover:to-green-400 text-slate-950 font-extrabold text-base sm:text-lg shadow-xl shadow-emerald-500/25 transition flex items-center justify-center gap-3 mb-4">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                        <span>Buy Ticket on WhatsApp (03084996283)</span>
+                    </a>
+
+                    <!-- Copy WhatsApp Number Button -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 border border-slate-800 rounded-xl p-3.5">
+                        <div class="flex items-center gap-2.5 text-sm text-slate-300">
+                            <i class="fa-solid fa-phone-volume text-emerald-400"></i>
+                            <span>Official WhatsApp: <strong class="text-white tracking-wider">03084996283</strong></span>
+                        </div>
+                        <button type="button" onclick="copyWhatsAppNumber()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-emerald-400 border border-slate-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Copy Number (03084996283)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Ticket Tracker (#001 to #500) -->
+    <section id="ticket-tracker" class="py-12 px-4 sm:px-6 border-t border-slate-800/60 bg-slate-950/50">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-400">100% Live Transparency</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-white mt-1">
+                        Live Ticket Tracker (#001 – #500)
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">
+                        Kisi bhi available (green) ticket number par click karke usay direct WhatsApp par book karein!
+                    </p>
+                </div>
+
+                <!-- Legend -->
+                <div class="flex items-center gap-4 text-xs font-semibold">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded bg-emerald-500/20 border border-emerald-500/60 inline-block"></span>
+                        <span class="text-slate-300">Available (<span id="available-legend-count">0</span>)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded bg-rose-500/20 border border-rose-500/50 inline-block"></span>
+                        <span class="text-slate-400">Sold (<span id="sold-legend-count">0</span>)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar Card -->
+            <div class="glass-card rounded-2xl p-5 mb-6 border border-slate-800">
+                <div class="flex items-center justify-between text-sm font-bold mb-2.5">
+                    <span class="text-slate-200">
+                        Tickets Sold: <span id="sold-count-text" class="text-emerald-400">0</span> / 500
+                    </span>
+                    <span id="percentage-text" class="text-amber-400">0% Sold</span>
+                </div>
+                <div class="w-full h-4 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                    <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 rounded-full transition-all duration-700" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs & Search -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="filterTickets('all')" id="filter-all" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 transition">
+                        All (500)
+                    </button>
+                    <button type="button" onclick="filterTickets('available')" id="filter-available" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+                        Available Only
+                    </button>
+                    <button type="button" onclick="filterTickets('sold')" id="filter-sold" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+                        Sold Only
+                    </button>
+                </div>
+
+                <div class="relative w-full sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="ticket-search" onkeyup="searchTicket(this.value)" placeholder="Number search (e.g. 077)..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                </div>
+            </div>
+
+            <!-- 500 Tickets Grid Container -->
+            <div id="tickets-grid" class="glass-card rounded-2xl p-4 border border-slate-800 max-h-96 overflow-y-auto ticket-scroll grid grid-cols-5 sm:grid-cols-10 md:grid-cols-12 gap-2">
+                <!-- Tickets generated dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules & Transparency Guarantee Section -->
+    <section class="py-14 px-4 sm:px-6 border-t border-slate-800/60">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10">
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Trust & Fairness</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-white mt-1">
+                    Vexalio Lottery Rules & 53 Winners Guarantee
+                </h2>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-6 border border-slate-800">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">53 Winners Live Draw</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Jaise hi 500 tickets poori hongi, live screen recording par <strong>Google Random Number Generator</strong> ke zariye pehle <strong>3 Grand Prize Draws</strong> aur uske baad <strong>50 Free Domain Draws</strong> kiye jayenge.
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 border border-slate-800">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-code-branch"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">Instant Handover & Domain Setup</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Draw ke foran baad 3 Grand Winners ko <strong>Lyra Game Builder</strong> ya <strong>Custom AI Builder</strong> ka source code + Free Domain, aur baqi 50 winners ko unka <strong>FREE Custom Domain</strong> (<code>.oneapp.dev</code>) activate karke diya jayega.
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 border border-slate-800">
+                    <div class="w-11 h-11 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">Zero Monthly API / Server Cost</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Dono platforms aur free domains browser-native aur zero-cost architecture par chalte hain. Winners ko koi mahana hosting, domain renewal, ya paid API key ka kharcha nahi uthana padega.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-8 px-4 text-center text-slate-500 text-xs sm:text-sm">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="font-display font-bold text-slate-300">
+                VEXALIO LOTTERY © 2026 • All Rights Reserved
+            </div>
+            <div>
+                Ticket Booking & Support WhatsApp: 
+                <a href="https://wa.me/923084996283" target="_blank" class="text-emerald-400 font-bold hover:underline">
+                    03084996283
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        let currentQuantity = 1;
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        // Format number to 3 digits (#001, #045, #500)
+        function formatTicketNum(num) {
+            return '#' + String(num).padStart(3, '0');
+        }
+
+        // Show custom toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2800);
+        }
+
+        // Copy WhatsApp Number using fallback-safe execCommand
+        function copyWhatsAppNumber() {
+            const num = LOTTERY_CONFIG.whatsappNumberDisplay;
+            const tempInput = document.createElement('input');
+            tempInput.value = num;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast(`WhatsApp Number (${num}) Copy Ho Gaya!`);
             } catch (err) {
-                grid.innerHTML = '<p style="color:#ef4444; text-align:center; width:100%;">Error processing matrix from README source.</p>';
+                showToast(`Number: ${num}`);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // Update ticket quantity and WhatsApp link
+        function updateBookingUI(qty) {
+            currentQuantity = Math.max(1, Math.min(500, parseInt(qty) || 1));
+            document.getElementById('custom-qty-input').value = currentQuantity;
+
+            const totalPKR = currentQuantity * LOTTERY_CONFIG.ticketPricePKR;
+            document.getElementById('total-price-display').textContent = `Rs. ${totalPKR.toLocaleString()}`;
+
+            // Highlight preset buttons if matched
+            document.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.classList.remove('border-2', 'border-emerald-500', 'bg-emerald-500/20', 'text-white');
+                btn.classList.add('border', 'border-slate-700', 'bg-slate-900/70', 'text-slate-300');
+            });
+            const activePreset = document.getElementById(`qty-btn-${currentQuantity}`);
+            if (activePreset) {
+                activePreset.classList.remove('border', 'border-slate-700', 'bg-slate-900/70', 'text-slate-300');
+                activePreset.classList.add('border-2', 'border-emerald-500', 'bg-emerald-500/20', 'text-white');
+            }
+
+            // Update WhatsApp URL with pre-filled message
+            const message = `Assalam-o-Alaikum! Mujhe ${LOTTERY_CONFIG.brandName} ki ${currentQuantity} ticket(s) buy karni hain (Total: Rs. ${totalPKR}). Payment details bhej dein.`;
+            const waUrl = `https://wa.me/${LOTTERY_CONFIG.whatsappNumberInternational}?text=${encodeURIComponent(message)}`;
+            document.getElementById('whatsapp-buy-link').href = waUrl;
+        }
+
+        function selectQuantity(qty) {
+            updateBookingUI(qty);
+        }
+
+        function changeCustomQty(delta) {
+            updateBookingUI(currentQuantity + delta);
+        }
+
+        function handleInputQty(val) {
+            updateBookingUI(val);
+        }
+
+        // Book a specific ticket number directly via WhatsApp
+        function bookSpecificTicket(ticketNum) {
+            const formatted = formatTicketNum(ticketNum);
+            const message = `Assalam-o-Alaikum! Mujhe ${LOTTERY_CONFIG.brandName} ki Ticket Number ${formatted} (Rs. ${LOTTERY_CONFIG.ticketPricePKR}) buy karni hai. Payment details bhej dein.`;
+            const waUrl = `https://wa.me/${LOTTERY_CONFIG.whatsappNumberInternational}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // Render Progress Bar & Stats
+        function renderStats() {
+            const soldSet = new Set(LOTTERY_CONFIG.soldTicketNumbers);
+            const soldCount = soldSet.size;
+            const total = LOTTERY_CONFIG.totalTickets;
+            const remaining = total - soldCount;
+            const percentage = ((soldCount / total) * 100).toFixed(1);
+
+            document.getElementById('hero-remaining-count').textContent = remaining;
+            document.getElementById('sold-count-text').textContent = soldCount;
+            document.getElementById('sold-legend-count').textContent = soldCount;
+            document.getElementById('available-legend-count').textContent = remaining;
+            document.getElementById('percentage-text').textContent = `${percentage}% Sold`;
+            document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+        }
+
+        // Render 500 Tickets Grid
+        function renderTicketsGrid() {
+            const grid = document.getElementById('tickets-grid');
+            const soldSet = new Set(LOTTERY_CONFIG.soldTicketNumbers);
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= LOTTERY_CONFIG.totalTickets; i++) {
+                const isSold = soldSet.has(i);
+                const formatted = formatTicketNum(i);
+
+                // Filter check
+                if (currentFilter === 'available' && isSold) continue;
+                if (currentFilter === 'sold' && !isSold) continue;
+
+                // Search check
+                if (currentSearch && !formatted.includes(currentSearch) && !String(i).includes(currentSearch)) {
+                    continue;
+                }
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+
+                if (isSold) {
+                    btn.className = 'py-2 px-1 rounded-lg text-xs font-mono font-bold bg-rose-500/10 border border-rose-500/30 text-rose-400/70 line-through cursor-not-allowed';
+                    btn.title = `${formatted} - Already Sold`;
+                    btn.textContent = formatted;
+                    btn.disabled = true;
+                } else {
+                    btn.className = 'py-2 px-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/10 hover:bg-emerald-500 border border-emerald-500/30 text-emerald-300 hover:text-slate-950 transition cursor-pointer';
+                    btn.title = `Click to buy Ticket ${formatted} on WhatsApp`;
+                    btn.textContent = formatted;
+                    btn.onclick = () => bookSpecificTicket(i);
+                }
+
+                grid.appendChild(btn);
+            }
+
+            if (grid.children.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-8 text-slate-400 text-sm">Koi ticket number nahi mila.</div>`;
             }
         }
 
-        // Window toggles
-        function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
-                
-        function closeModal(id) {
-             document.getElementById(id).style.display = 'none';
-             // Reset fields states securely
-            document.getElementById('formFields').style.display = 'block';
-            document.getElementById('codeDisplay').style.display = 'none';
-            document.getElementById('actionBtn').setAttribute('onclick', 'generateREADMEText()');
-            document.getElementById('actionBtn').innerText = "Generate Data";
+        function filterTickets(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-slate-950');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            const activeBtn = document.getElementById(`filter-${type}`);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
+
+            renderTicketsGrid();
         }
 
-        function verifyPassword() {
-            const pass = document.getElementById('passInput').value;
-            if (pass === "mt5121472786tm") {
-                closeModal('passwordModal');
-                document.getElementById('formModal').style.display = 'flex';
-                document.getElementById('passInput').value = '';
-             } else {
-                alert("Authentication Failed. Access Denied.");
-            }
+        function searchTicket(query) {
+            currentSearch = query.trim();
+            renderTicketsGrid();
         }
 
-        // Data payload verification engine
-        function generateREADMEText() {
-            const title = document.getElementById('webTitle').value.trim();
-            const detail = document.getElementById('webDetail').value.trim();
-            const price = document.getElementById('webPrice').value.trim();
-            const url = document.getElementById('webUrl').value.trim();
-
-            if(!title || !detail || !price || !url) {
-                alert("All verification parameters are required!");
-                return;
-            }
-
-            if(!confirm("Kya aap Nexura Company ki 50% revenue terms se agree karte hain?")) return;
-
-            // Enforcing formatting structure matrix
-            const formattedLine = `DATA|Title: ${title}|Detail: ${detail}|Price: ${price}|URL: ${url}`;
-                        
-            // Re-render display fields
-            document.getElementById('formFields').style.display = 'none';
-            const displayBlock = document.getElementById('codeDisplay');
-            displayBlock.innerText = formattedLine;
-            displayBlock.style.display = 'block';
-
-            // Mutate layout controller action button state
-            const actionBtn = document.getElementById('actionBtn');
-            actionBtn.innerText = "Copy Payload & Open Editor";
-            actionBtn.setAttribute('onclick', `copyAndRedirect()`);
-        }
-
-        // Final phase: execution trigger route without authentication tokens
-        function copyAndRedirect() {
-            const textToCopy = document.getElementById('codeDisplay').innerText;
-            navigator.clipboard.writeText(textToCopy);
-                        
-            alert("Safar Mukammal! Aapka data secure pipeline mein copy ho gaya hai. Ab GitHub page khulega, wahan README.md ke sab se end (aakhri line) par ja kar Ctrl+V (Paste) kar dein aur commit kar dein!");
-                        
-            window.open("https://github.com/muhammadtaqi512q-oss/JAVIS.AI/edit/main/README.md", "_blank");
-            closeModal('formModal');
-        }
-
-        // Engine initialize sequence
-        loadMarketFromREADME();
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderStats();
+            renderTicketsGrid();
+            updateBookingUI(1);
+        });
     </script>
 </body>
 </html>
